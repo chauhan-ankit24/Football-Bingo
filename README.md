@@ -38,7 +38,7 @@ This is a **Bingo game** built with **React Native** using TypeScript. The game 
 ---
 
 ## 🖼️ Screenshots  
-![alt text](https://ibb.co/kBpRqQK)
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/xLypzJh/Screenshot-2024-10-15-220756.png" alt="Screenshot-2024-10-15-220756" border="0" /></a>
 
 ---
 
