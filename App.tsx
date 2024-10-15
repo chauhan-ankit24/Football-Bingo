@@ -9,10 +9,10 @@ import {
   Animated,
   Image,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient'; // Add this library for gradients
-import { questions } from './questionsData'; // Import the data
-import AnimatedProgressWheel from 'react-native-progress-wheel';
-const { width } = Dimensions.get('window');
+import LinearGradient from 'react-native-linear-gradient'; // For gradient backgrounds
+import { questions } from './questionsData'; // Question data import
+
+const { width } = Dimensions.get('window'); // Screen width for responsive layout
 
 const BingoGame: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -20,13 +20,12 @@ const BingoGame: React.FC = () => {
   const [clickedCells, setClickedCells] = useState(Array(9).fill(false));
   const [isGameOver, setIsGameOver] = useState(false);
   const [timer, setTimer] = useState(10);
-  const [progress] = useState(new Animated.Value(1)); // For timer progress animation
-  const crownScale = useRef(new Animated.Value(0)).current;
 
+  const [progress] = useState(new Animated.Value(1)); // Progress animation for timer
+  const crownScale = useRef(new Animated.Value(0)).current; // Crown animation reference
+  const shakeAnimation = useRef(questions.map(() => new Animated.Value(0))).current; // Shake effect for incorrect answers
 
-
-  const shakeAnimation = useRef(questions.map(() => new Animated.Value(0))).current;
-
+  // Check if the game is over
   useEffect(() => {
     if (currentQuestionIndex >= questions.length) {
       setIsGameOver(true);
@@ -34,25 +33,23 @@ const BingoGame: React.FC = () => {
     }
   }, [currentQuestionIndex]);
 
+  // Timer logic and progress animation
   useEffect(() => {
     if (isGameOver) {
-      // Stop the animation if the game is over
       Animated.timing(progress, {
         toValue: 0,
         duration: 0,
         useNativeDriver: false,
       }).start();
-      return; // Exit the effect if the game is over
+      return;
     }
 
-    // Start the animation for the progress bar
     Animated.timing(progress, {
       toValue: 0,
       duration: 10000,
       useNativeDriver: false,
     }).start();
 
-    // Timer logic
     const timerInterval = setInterval(() => {
       setTimer(prev => {
         if (prev <= 1) {
@@ -64,67 +61,67 @@ const BingoGame: React.FC = () => {
       });
     }, 1000);
 
-    // Cleanup function
     return () => {
       clearInterval(timerInterval);
-      // Optionally reset progress if necessary
-      progress.setValue(1); // Reset progress if needed
+      progress.setValue(1); // Reset progress animation
     };
   }, [isGameOver, currentQuestionIndex]);
 
-
+  // Change to the next question
   const changeQuestion = () => {
-    const nextIndex = currentQuestionIndex + 1;
-    setCurrentQuestionIndex(nextIndex);
+    setCurrentQuestionIndex(prev => prev + 1);
     setTimer(10);
     progress.setValue(1); // Reset progress animation
   };
 
+  // Handle cell press
   const handlePress = (index: number) => {
-    if (isGameOver || clickedCells[index]) { return }
+    if (isGameOver || clickedCells[index]) return;
 
     const isCorrect = questions[index].answer.value === questions[currentQuestionIndex].answer.value;
 
     if (isCorrect) {
       setClickedCells(prev => {
-        const newClickedCells = [...prev];
-        newClickedCells[index] = true;
-        return newClickedCells;
+        const newCells = [...prev];
+        newCells[index] = true;
+        return newCells;
       });
-
-      animateCrown();
+      animateCrown(); // Trigger crown animation
       setCorrectCount(prev => prev + 1);
     } else {
-      triggerShake(index);
+      triggerShake(index); // Trigger shake animation for incorrect answer
     }
 
     changeQuestion();
   };
 
+  // Skip to the next question
   const handleSkip = () => {
-    changeQuestion(); // Simply call the same function to skip to the next question
+    changeQuestion();
   };
 
+  // Shake animation for incorrect answers
   const triggerShake = (index: number) => {
     Animated.sequence([
       Animated.timing(shakeAnimation[index], {
-        toValue: 10, // Shift to the right
+        toValue: 10,
         duration: 50,
         useNativeDriver: true,
       }),
       Animated.timing(shakeAnimation[index], {
-        toValue: -10, // Shift to the left
+        toValue: -10,
         duration: 50,
         useNativeDriver: true,
       }),
       Animated.timing(shakeAnimation[index], {
-        toValue: 0, // Reset position
+        toValue: 0,
         duration: 50,
         useNativeDriver: true,
       }),
     ]).start();
   };
 
+  // Crown animation for correct answers
   const animateCrown = () => {
     Animated.spring(crownScale, {
       toValue: 1,
@@ -139,44 +136,11 @@ const BingoGame: React.FC = () => {
 
   return (
     <View style={styles.container}>
-
-      {/* <Progress.Bar progress={0.3} width={200} /> */}
-      {/* <Progress.Pie progress={0.4} size={50} /> */}
-      {/* <Progress.Circle size={30} indeterminate={true} /> */}
-      {/* <Progress.CircleSnail color={['red', 'green', 'blue']} /> */}
-      {/* <Progress.Pie
-        progress={0.4} // 40% progress
-        size={100} // Diameter of the circle
-        // thickness={8} // Inner circle thickness
-        color="#3498db" // Circle color (blue)
-        // textStyle={styles.text} // Custom text style
-        strokeCap="round" // Round edges for the circle stroke
-        direction="clockwise" // Progress direction
-        fill="#ecf0f1" // Fill color of the inner circle
-        formatText={(progress) => `${Math.round(progress * 100)}%`} // Display percentage text
-      /> */}
-
-      <AnimatedProgressWheel
-        size={100}
-        width={5}
-        max={10}
-        duration={11000}
-        progress={10}
-        showProgressLabel={true}
-        color={'yellow'}
-        animateFromValue={0}
-        backgroundColor={'orange'}
-        rotation={'-90deg'}
-      />
       <Text style={styles.header}>Football Bingo</Text>
 
       <View style={styles.rowContainer}>
         <Text style={styles.timer}>{timer}s</Text>
-        <Text
-          style={styles.question}
-          numberOfLines={2} // Limit the number of lines to 2
-          ellipsizeMode="tail" // Truncate the text at the end if it exceeds the number of lines
-        >
+        <Text style={styles.question} numberOfLines={2} ellipsizeMode="tail">
           {questions[currentQuestionIndex]?.question}
         </Text>
         <View style={styles.right}>
@@ -184,32 +148,25 @@ const BingoGame: React.FC = () => {
             <Text style={styles.skipButtonText}>Skip</Text>
           </TouchableOpacity>
           <Text style={styles.questionCount}>
-            {questions.length - currentQuestionIndex}{' '}left
+            {questions.length - currentQuestionIndex} left
           </Text>
         </View>
       </View>
 
-
       <View style={styles.progressBarContainer}>
         <Animated.View
-          style={[styles.progressBar, {
-            width: progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['0%', '100%'],
-            }),
-          }]}
+          style={[
+            styles.progressBar,
+            { width: progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) },
+          ]}
         />
       </View>
 
       <View style={styles.grid}>
         {questions.map((item, index) => (
-          <Animated.View style={{ transform: [{ translateX: shakeAnimation[index] }] }}>
+          <Animated.View key={item.answer.id} style={{ transform: [{ translateX: shakeAnimation[index] }] }}>
             <TouchableOpacity
-              key={item.answer.id}
-              style={[
-                styles.cell,
-                clickedCells[index] && styles.cellClicked,
-              ]}
+              style={[styles.cell, clickedCells[index] && styles.cellClicked]}
               onPress={() => handlePress(index)}
               disabled={isGameOver || clickedCells[index]}
             >
@@ -217,13 +174,9 @@ const BingoGame: React.FC = () => {
                 colors={clickedCells[index] ? ['#FF9800', '#F44336'] : ['#4CAF50', '#388E1F']}
                 style={styles.cellGradient}
               >
-                {/* Show Crown on correct answer with animation */}
                 {!clickedCells[index] ? (
                   <>
-                    <Image
-                      source={item.answer.image}
-                      style={styles.cellImage}
-                    />
+                    <Image source={item.answer.image} style={styles.cellImage} />
                     <Text style={styles.cellText}>{item.answer.value}</Text>
                   </>
                 ) : (
@@ -237,8 +190,6 @@ const BingoGame: React.FC = () => {
           </Animated.View>
         ))}
       </View>
-
-
 
       {isGameOver && (
         <Text style={styles.resultText}>
@@ -258,19 +209,19 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   header: {
-    fontSize: 40,
+    fontSize: 50,
+    width: '100%',
     fontWeight: 'bold',
-    color: '#FFD700', // Main color
+    color: '#4CAF50',
     textAlign: 'center',
-    textShadowColor: '#000', // Shadow color
-    textShadowOffset: { width: 3, height: 3 }, // First shadow offset
-    textShadowRadius: 10, // Blur effect for first shadow
-    // Second shadow for more depth
+    textShadowColor: '#000',
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 10,
-    elevation: 5, // For Android
+    elevation: 5,
     marginBottom: 20,
   },
   progressBarContainer: {
@@ -279,61 +230,60 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderRadius: 4,
     overflow: 'hidden',
-    // marginBottom: 2,
     borderColor: '#000',
     borderWidth: 0.5,
+    marginBottom: 5,
   },
   progressBar: {
     height: '100%',
     backgroundColor: '#4CAF50',
   },
-
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 2,
+    marginBottom: 10,
     backgroundColor: '#36626a',
     borderRadius: 10,
+    padding: 10,
   },
   timer: {
     width: '20%',
     fontSize: 30,
-    color: '#BB86FC',
+    color: 'yellow',
+    fontWeight: 'bold',
     textAlign: 'center',
   },
   question: {
     width: '50%',
     fontSize: 28,
     color: '#FFF',
-    marginBottom: 10,
     textAlign: 'center',
     height: 60,
-    // backgroundColor: '#555',
     padding: 8,
     borderRadius: 10,
   },
   right: {
     padding: 10,
     width: '30%',
-    flexDirection: 'column', // Stack vertically
-    alignItems: 'center', // Center horizontally
+    flexDirection: 'column',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   skipButton: {
-    padding: 5,
+    padding: 7,
     width: '50%',
-    backgroundColor: '#007bff',
+    backgroundColor: '#4CAF50',
     borderRadius: 5,
-    marginBottom: 5, // Add some space between button and text
+    marginBottom: 5,
   },
   skipButtonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
   questionCount: {
-    color: '#fff', // Change color as needed
+    color: '#fff',
   },
   grid: {
     flexDirection: 'row',
@@ -353,17 +303,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#36626a',
-    borderRadius: 4,
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: '#97cba9',
-    margin: 2,
+    margin: 1,
     overflow: 'hidden',
     position: 'relative',
-    elevation: 10, // Add shadow for a 3D effect
-    shadowColor: '#000',
+    elevation: 10,
+    shadowColor: '#97cba9',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 5,
+    shadowOpacity: 0.9,
+    shadowRadius: 10,
   },
   cellGradient: {
     flex: 1,
@@ -389,11 +339,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   cellClicked: {
-    opacity: 0.6, // Fades when clicked
+    opacity: 0.6,
   },
   resultText: {
-    fontSize: 20,
-    color: '#FFD700',
+    fontSize: 23,
+    color: '#36626a',
     marginTop: 20,
     textAlign: 'center',
   },

@@ -1,79 +1,120 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-# Getting Started
+# 🎉 Bingo App  
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+This is a **Bingo game** built with **React Native** using TypeScript. The game presents a 3x3 grid and challenges the player to match answers with questions displayed at the top. The game includes a timer, tracks progress, and ends when three correct answers are selected or all questions are exhausted.
 
-## Step 1: Start the Metro Server
+---
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## 📝 Features  
+- 3x3 grid with fixed answers for each game.  
+- Timer-based gameplay with a 10-second countdown per question.  
+- Win by selecting **3 correct answers** or answering all questions.  
+- **Skip** functionality to move to the next question.  
+- Images associated with some answers, including country flags and players.  
+- Tracks remaining questions and displays a question counter.  
+- Smooth transitions and progress tracking.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+---
 
-```bash
-# using npm
-npm start
+## 📦 Installation  
 
-# OR using Yarn
-yarn start
+1. **Clone the repository**:  
+   ```bash
+   git clone https://github.com/chauhan-ankit24/Football-Bingo.git
+   cd bingo-app
+   ```
+
+2. **Install dependencies**:  
+   ```bash
+   npm install
+   ```
+
+3. **Run the app**:  
+   ```bash
+   npx react-native start
+   npx react-native run-android # or run-ios for iOS
+   ```
+
+---
+
+## 🖼️ Screenshots  
+(Add some screenshots of the game in action here, if available.)
+
+---
+
+## 🛠️ Technologies Used  
+- **React Native**  
+- **TypeScript**  
+- **react-native-progress** (for the circular timer)  
+
+---
+
+## 📂 Project Structure  
+
+```
+bingo-app
+│
+├── /src
+│   ├── components/           # UI components (Grid, Timer, etc.)
+│   ├── screens/              # Main screens of the app
+│   ├── data/questionsData.ts # Questions & Answers data
+│   └── App.tsx               # Entry point of the application
+│
+├── /assets                   # Images and assets used in the game
+├── package.json              # Project dependencies
+└── README.md                 # Project documentation
 ```
 
-## Step 2: Start your Application
+---
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+## 🧩 How to Play  
+1. The **question** appears at the top.  
+2. Select the **correct answer** from the 3x3 grid.  
+3. **Timer** resets after every selection or when it hits 0 (auto-skip).  
+4. **Win** by choosing 3 correct answers, or the game ends when all questions are completed.  
 
-### For Android
+---
 
-```bash
-# using npm
-npm run android
+## 🔧 Configuration  
+If you want to add or modify questions, open the `/src/data/questionsData.ts` file and modify the question and answer objects.
 
-# OR using Yarn
-yarn android
+```ts
+export const questions = [
+  {
+    question: 'Portugal',
+    answer: {
+      value: 'Cristiano Ronaldo',
+      image: require('../assets/ronaldo.png'),
+      correct: true,
+    },
+  },
+  // Add more questions here...
+];
 ```
 
-### For iOS
+---
 
-```bash
-# using npm
-npm run ios
+## 🚀 Future Improvements  
+- Add multiplayer support.  
+- Introduce sound effects for win/lose events.  
+- Allow users to shuffle questions or answers.  
 
-# OR using Yarn
-yarn ios
-```
+---
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## 🤝 Contributing  
+Feel free to open an issue or submit a pull request if you'd like to contribute to the project.
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+---
 
-## Step 3: Modifying your App
+## 📄 License  
+This project is licensed under the **MIT License**.
 
-Now that you have successfully run the app, let's modify it.
+---
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+## 🧑‍💻 Author  
+Developed by **[Ankit Chauhan]**
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+---
 
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## 📧 Contact  
+For any inquiries or support, contact me at: **[akashchauhan72520@gmail.com]**
